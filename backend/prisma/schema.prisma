@@ -12,3 +12,94 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?  // optional for guest users
+  avatarUrl    String?
+  bio          String?
+  isGuest      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  deletedAt    DateTime? // soft delete
+
+  posts        Post[]
+  comments     Comment[]
+  likes        Like[]
+  followers    Follow[]         @relation("followers")
+  following    Follow[]         @relation("following")
+  sentRequests FollowRequest[]  @relation("sentRequests")
+  receivedRequests FollowRequest[] @relation("receivedRequests")
+}
+
+model Post {
+  id        String    @id @default(cuid())
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String
+  content   String?   // optional for image-only posts
+  imageUrl  String?
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  comments  Comment[]
+  likes     Like[]
+
+  @@index([authorId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+  content   String
+  createdAt DateTime @default(now())
+  deletedAt DateTime?
+
+  @@index([authorId])
+  @@index([postId])
+}
+
+model Like {
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+  post     Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId   String
+  createdAt DateTime @default(now())
+
+  @@id([userId, postId]) // composite primary key
+  @@index([postId])
+}
+
+model Follow {
+  follower    User   @relation("following", fields: [followerId], references: [id], onDelete: Cascade)
+  followerId  String
+  following   User   @relation("followers", fields: [followingId], references: [id], onDelete: Cascade)
+  followingId String
+  createdAt   DateTime @default(now())
+
+  @@id([followerId, followingId]) // composite primary key
+  @@index([followingId])
+}
+
+model FollowRequest {
+  id          String        @id @default(cuid())
+  requester   User          @relation("sentRequests", fields: [requesterId], references: [id], onDelete: Cascade)
+  requesterId String
+  target      User          @relation("receivedRequests", fields: [targetId], references: [id], onDelete: Cascade)
+  targetId    String
+  status      RequestStatus @default(PENDING)
+  createdAt   DateTime      @default(now())
+
+  @@unique([requesterId, targetId])
+  @@index([targetId])
+}
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
