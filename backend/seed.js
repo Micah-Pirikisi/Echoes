@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import bcrypt from "bcrypt";
 import { faker } from "@faker-js/faker";
-import { prisma } from "./src/config/prisma.js";
+import prisma from "./src/config/prisma.js";
 
 async function main() {
   console.log("Seeding...");
