@@ -8,7 +8,7 @@ import { uploadImage } from "../controllers/uploadController.js";
 const storage = new CloudinaryStorage({
   cloudinary,
   params: async () => ({
-    folder: "odin-book",
+    folder: "echoes",
     allowed_formats: ["jpg", "jpeg", "png", "webp"],
     transformation: [{ quality: "auto", fetch_format: "auto" }],
   }),
@@ -16,7 +16,13 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith("image/")) {
+      return cb(new Error("Only image files are allowed"), false);
+    }
+    cb(null, true);
+  },
 });
 
 const router = Router();
