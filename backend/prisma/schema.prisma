@@ -41,7 +41,12 @@ model Post {
   content   String?   // optional for image-only posts
   imageUrl  String?
   createdAt DateTime  @default(now())
+  publishedAt  DateTime  @default(now()) // for scheduled posts / feed ordering
+  scheduledAt  DateTime?
   deletedAt DateTime?
+  echoParent   Post?     @relation("EchoChain", fields: [echoParentId], references: [id])
+  echoParentId String?
+  echoes       Post[]    @relation("EchoChain")
 
   comments  Comment[]
   likes     Like[]
@@ -57,7 +62,6 @@ model Comment {
   postId    String
   content   String
   createdAt DateTime @default(now())
-  deletedAt DateTime?
 
   @@index([authorId])
   @@index([postId])
