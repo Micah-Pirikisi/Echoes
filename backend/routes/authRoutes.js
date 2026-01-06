@@ -30,4 +30,9 @@ router.post("/logout", logout);
 // Guest login route
 router.post("/guest", guestLogin);
 
+router.get("/me", (req, res) => {
+  if (!req.user) return res.status(200).json(null);
+  res.json(req.user);
+});
+
 export default router;
