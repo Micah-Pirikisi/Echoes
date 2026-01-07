@@ -1,4 +1,4 @@
-import { prisma } from '../config/prisma.js';
+import prisma from '../src/config/prisma.js';
 import { validationResult } from 'express-validator';
 
 const postQueryInclude = {

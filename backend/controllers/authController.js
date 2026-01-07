@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { prisma } from "../config/prisma.js";
+import prisma from "../src/config/prisma.js";
 import { validationResult } from "express-validator";
 
 // Signup controller
@@ -31,7 +31,7 @@ export const signup = async (req, res, next) => {
 
 // Login controller
 export const login = (req, res) => {
-  res.json({ id: req.user.id });
+  res.json({ id: req.user.id, email: req.user.email, name: req.user.name });
 };
 
 // Logout controller
@@ -45,10 +45,13 @@ export const logout = (req, res, next) => {
 // Guest login controller
 export const guestLogin = async (req, res, next) => {
   try {
+    console.log("Guest login attempt");
     const email = process.env.GUEST_EMAIL;
     const pwd = process.env.GUEST_PASSWORD;
+    console.log("Email:", email);
 
     let user = await prisma.user.findUnique({ where: { email } });
+    console.log("User found:", !!user);
 
     if (!user) {
       const passwordHash = await bcrypt.hash(pwd, 10);
@@ -61,10 +64,15 @@ export const guestLogin = async (req, res, next) => {
           avatarUrl: "https://www.gravatar.com/avatar?d=identicon",
         },
       });
+      console.log("Guest user created");
     }
 
     req.login({ id: user.id }, (err) => {
-      if (err) return next(err);
+      if (err) {
+        console.error("Login error:", err);
+        return next(err);
+      }
+      console.log("Login successful");
       res.json({
         id: user.id,
         email: user.email,
@@ -73,6 +81,7 @@ export const guestLogin = async (req, res, next) => {
       });
     });
   } catch (err) {
+    console.error("Guest login error:", err);
     next(err);
   }
 };

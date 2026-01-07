@@ -31,6 +31,7 @@ router.post("/logout", logout);
 router.post("/guest", guestLogin);
 
 router.get("/me", (req, res) => {
+  console.log("GET /auth/me - User:", req.user);
   if (!req.user) return res.status(200).json(null);
   res.json(req.user);
 });

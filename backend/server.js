@@ -1,16 +1,16 @@
 import express from "express";
 import session from "express-session";
 import pgSession from "connect-pg-simple";
-import passport from "./config/passport.js";
+import passport from "./src/config/passport.js";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import morgan from "morgan";
 import cors from "cors";
 import { errorHandler } from "./middleware/errorHandler.js";
-import authRoutes from "./routes/auth.js";
-import uploadRoutes from "./routes/uploads.js";
-import postRoutes from "./routes/posts.js";
-import userRoutes from "./routes/users.js";
+import authRoutes from "./routes/authRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
+import postRoutes from "./routes/postRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
 
@@ -27,7 +27,18 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(
   cors({
-    origin: process.env.FRONTEND_ORIGIN || "http://localhost:5173",
+    origin: (origin, callback) => {
+      const allowed = [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        process.env.FRONTEND_ORIGIN
+      ].filter(Boolean);
+      if (!origin || allowed.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
