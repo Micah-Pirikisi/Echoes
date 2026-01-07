@@ -17,6 +17,11 @@ dotenv.config();
 const app = express();
 const PgSession = pgSession(session);
 
+const isProd = process.env.NODE_ENV === "production";
+if (isProd) {
+  app.set("trust proxy", 1); // needed for secure cookies behind proxy
+}
+
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
@@ -37,8 +42,8 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false,
-      sameSite: "lax",
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
