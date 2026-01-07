@@ -1,12 +1,12 @@
-import prisma from '../src/config/prisma.js';
-import { validationResult } from 'express-validator';
+import prisma from "../src/config/prisma.js";
+import { validationResult } from "express-validator";
 
 const postQueryInclude = {
   author: true,
   echoParent: { include: { author: true } },
-  comments: { include: { author: true }, orderBy: { createdAt: 'asc' } },
+  comments: { include: { author: true }, orderBy: { createdAt: "asc" } },
   likes: { select: { userId: true } },
-  _count: { select: { likes: true, echoes: true } }
+  _count: { select: { likes: true, echoes: true } },
 };
 
 // GET /feed
@@ -15,16 +15,16 @@ export const getFeed = async (req, res, next) => {
     const me = req.user.id;
     const following = await prisma.follow.findMany({
       where: { followerId: me },
-      select: { followingId: true }
+      select: { followingId: true },
     });
-    const ids = [me, ...following.map(f => f.followingId)];
+    const ids = [me, ...following.map((f) => f.followingId)];
     const now = new Date();
 
     const posts = await prisma.post.findMany({
       where: { authorId: { in: ids }, publishedAt: { lte: now } },
-      orderBy: { publishedAt: 'desc' },
+      orderBy: { publishedAt: "desc" },
       include: postQueryInclude,
-      take: 60
+      take: 60,
     });
 
     res.json({ posts, me });
@@ -36,7 +36,8 @@ export const getFeed = async (req, res, next) => {
 // POST / (create post)
 export const createPost = async (req, res, next) => {
   const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
 
   const { content, imageUrl, scheduledAt } = req.body;
   try {
@@ -47,8 +48,8 @@ export const createPost = async (req, res, next) => {
         imageUrl,
         authorId: req.user.id,
         scheduledAt: scheduledAt ? publishedAt : null,
-        publishedAt
-      }
+        publishedAt,
+      },
     });
     res.status(201).json(post);
   } catch (err) {
@@ -59,12 +60,15 @@ export const createPost = async (req, res, next) => {
 // POST /:id/echo (reshare)
 export const echoPost = async (req, res, next) => {
   const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
 
-  const { content = '', scheduledAt } = req.body;
+  const { content = "", scheduledAt } = req.body;
   try {
-    const parent = await prisma.post.findUnique({ where: { id: req.params.id } });
-    if (!parent) return res.status(404).json({ message: 'Post not found' });
+    const parent = await prisma.post.findUnique({
+      where: { id: req.params.id },
+    });
+    if (!parent) return res.status(404).json({ message: "Post not found" });
 
     const publishedAt = scheduledAt ? new Date(scheduledAt) : new Date();
     const echo = await prisma.post.create({
@@ -73,8 +77,8 @@ export const echoPost = async (req, res, next) => {
         content,
         echoParentId: parent.id,
         publishedAt,
-        scheduledAt: scheduledAt ? publishedAt : null
-      }
+        scheduledAt: scheduledAt ? publishedAt : null,
+      },
     });
     res.status(201).json(echo);
   } catch (err) {
@@ -88,7 +92,7 @@ export const likePost = async (req, res, next) => {
     await prisma.like.upsert({
       where: { userId_postId: { userId: req.user.id, postId: req.params.id } },
       create: { userId: req.user.id, postId: req.params.id },
-      update: {}
+      update: {},
     });
     res.json({ ok: true });
   } catch (err) {
@@ -100,7 +104,7 @@ export const likePost = async (req, res, next) => {
 export const unlikePost = async (req, res, next) => {
   try {
     await prisma.like.delete({
-      where: { userId_postId: { userId: req.user.id, postId: req.params.id } }
+      where: { userId_postId: { userId: req.user.id, postId: req.params.id } },
     });
     res.json({ ok: true });
   } catch (err) {
@@ -111,15 +115,16 @@ export const unlikePost = async (req, res, next) => {
 // POST /:id/comments
 export const addComment = async (req, res, next) => {
   const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
 
   try {
     const comment = await prisma.comment.create({
       data: {
         content: req.body.content,
         postId: req.params.id,
-        authorId: req.user.id
-      }
+        authorId: req.user.id,
+      },
     });
     res.status(201).json(comment);
   } catch (err) {

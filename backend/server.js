@@ -31,7 +31,7 @@ app.use(
       const allowed = [
         "http://localhost:5173",
         "http://localhost:5174",
-        process.env.FRONTEND_ORIGIN
+        process.env.FRONTEND_ORIGIN,
       ].filter(Boolean);
       if (!origin || allowed.includes(origin)) {
         callback(null, true);

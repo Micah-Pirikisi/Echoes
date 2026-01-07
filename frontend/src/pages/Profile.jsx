@@ -74,11 +74,15 @@ export default function Profile() {
         </div>
         {isMe && (
           <div className="flex flex-col gap-2">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setFile(e.target.files[0])}
-            />
+            <div className="file-input-wrapper">
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                onChange={(e) => setFile(e.target.files[0])}
+              />
+              <label htmlFor="avatar-upload">Choose Avatar</label>
+            </div>
             <button
               className="px-3 py-1 bg-accent text-white rounded text-sm"
               onClick={uploadAvatar}

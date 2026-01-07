@@ -34,12 +34,59 @@ export default function Feed() {
 
   const uploadImage = async () => {
     if (!file) return null;
+
+    // Compress image before upload
+    const compressed = await compressImage(file);
+
     const form = new FormData();
-    form.append("image", file);
+    form.append("image", compressed);
     const { data } = await api.post("/uploads/image", form, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return data.url;
+  };
+
+  const compressImage = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+
+          // Reduce dimensions if too large
+          const maxWidth = 1200;
+          const maxHeight = 1200;
+          if (width > maxWidth || height > maxHeight) {
+            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            width *= ratio;
+            height *= ratio;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Compress to blob with quality 0.7
+          canvas.toBlob(
+            (blob) => {
+              const compressedFile = new File([blob], file.name, {
+                type: "image/jpeg",
+                lastModified: Date.now(),
+              });
+              resolve(compressedFile);
+            },
+            "image/jpeg",
+            0.7
+          );
+        };
+      };
+    });
   };
 
   const createPost = async () => {
@@ -131,7 +178,6 @@ export default function Feed() {
   return (
     <div className="max-w-3xl mx-auto p-6">
       <div className="card p-4 mb-4">
-        <h2 className="text-lg font-semibold mb-2">Compose</h2>
         <textarea
           className="w-full border rounded px-3 py-2 text-sm"
           rows={3}
@@ -140,11 +186,15 @@ export default function Feed() {
           onChange={(e) => setContent(e.target.value)}
         />
         <div className="mt-2 flex items-center gap-2">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setFile(e.target.files[0])}
-          />
+          <div className="file-input-wrapper">
+            <input
+              id="post-image-upload"
+              type="file"
+              accept="image/*"
+              onChange={(e) => setFile(e.target.files[0])}
+            />
+            <label htmlFor="post-image-upload">Add Image</label>
+          </div>
           <button
             className="px-4 py-2 bg-accent text-white rounded"
             onClick={createPost}

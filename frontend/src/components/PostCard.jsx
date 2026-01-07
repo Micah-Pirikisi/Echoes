@@ -43,7 +43,7 @@ export function PostCard({ post, me, onLikeToggle, onEcho, onComment }) {
     <div
       className={`card p-4 mb-4 transition ${
         isStale ? "opacity-75 scale-[0.99]" : ""
-      }`}
+      } ${echoedFrom ? "pulse-gentle" : ""}`}
     >
       <div className="flex items-center gap-3">
         <img
@@ -67,19 +67,16 @@ export function PostCard({ post, me, onLikeToggle, onEcho, onComment }) {
               </span>
             )}
           </div>
-          <div className="text-xs text-gray-500">
-            {new Date(post.publishedAt).toLocaleString()}
-            {depth > 0 && (
-              <span
-                className="ml-2 inline-flex items-center gap-1 text-[10px] px-2 py-0.5 bg-gray-100 rounded-full"
-                title={`Travel distance: echoed ${depth} ${
-                  depth === 1 ? "hop" : "hops"
-                } from the original`}
-              >
-                ↻ {depth}
-              </span>
-            )}
-          </div>
+          {depth > 0 && (
+            <div
+              className="text-xs text-gray-500 inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 rounded-full"
+              title={`Travel distance: echoed ${depth} ${
+                depth === 1 ? "hop" : "hops"
+              } from the original`}
+            >
+              ↻ {depth}
+            </div>
+          )}
         </div>
       </div>
 
@@ -90,7 +87,7 @@ export function PostCard({ post, me, onLikeToggle, onEcho, onComment }) {
         <img
           src={post.imageUrl}
           alt=""
-          className="mt-3 rounded-lg max-h-96 object-cover w-full"
+          className="mt-3 rounded-lg max-h-40 object-cover w-full"
         />
       )}
 
@@ -119,11 +116,9 @@ export function PostCard({ post, me, onLikeToggle, onEcho, onComment }) {
         >
           Echo ({post._count?.echoes || 0})
         </button>
-        <div className="text-xs text-gray-500">Reach: {reach}</div>
       </div>
 
       <div className="mt-3">
-        <div className="text-xs text-gray-500 mb-1">Comments</div>
         {post.comments?.map((c) => (
           <div key={c.id} className="text-sm mb-1">
             <span className="font-semibold">{c.author.name}:</span> {c.content}
