@@ -1,9 +1,11 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { api } from "../api/client";
+import { useTheme } from "../context/ThemeContext";
 
 export function Sidebar({ onComposeClick }) {
   const nav = useNavigate();
   const location = useLocation();
+  const { isDark, toggleTheme } = useTheme();
 
   const handleLogout = async () => {
     try {
@@ -21,9 +23,9 @@ export function Sidebar({ onComposeClick }) {
 
   const navItems = [
     { label: "Home", path: "/feed", icon: "🏠" },
-    { label: "Explore", path: "/users", icon: "🔍" },
+    { label: "Explore", path: "/users", icon: "🌍" },
+    { label: "Search", path: "/search", icon: "🔎" },
     { label: "Profile", path: "/profile/me", icon: "👤" },
-    { label: "Messages", path: "#", icon: "💬", disabled: true },
   ];
 
   return (
@@ -50,9 +52,19 @@ export function Sidebar({ onComposeClick }) {
             <span className="sidebar-label">Compose</span>
           </button>
         </div>
-        <button onClick={handleLogout} className="sidebar-logout-btn">
-          Logout
-        </button>
+        <div className="sidebar-bottom-actions">
+          <button
+            onClick={toggleTheme}
+            className="sidebar-nav-item"
+            title={isDark ? "Light mode" : "Dark mode"}
+          >
+            <span className="sidebar-icon">{isDark ? "☀️" : "🌙"}</span>
+            <span className="sidebar-label">{isDark ? "Light" : "Dark"}</span>
+          </button>
+          <button onClick={handleLogout} className="sidebar-logout-btn">
+            Logout
+          </button>
+        </div>
       </nav>
 
       {/* Mobile Bottom Navigation */}
@@ -76,6 +88,13 @@ export function Sidebar({ onComposeClick }) {
           title="Compose"
         >
           <span className="mobile-icon">✍️</span>
+        </button>
+        <button
+          onClick={toggleTheme}
+          className="mobile-nav-item"
+          title={isDark ? "Light mode" : "Dark mode"}
+        >
+          <span className="mobile-icon">{isDark ? "☀️" : "🌙"}</span>
         </button>
         <button
           onClick={handleLogout}

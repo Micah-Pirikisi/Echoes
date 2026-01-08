@@ -26,7 +26,7 @@ export default function PostDetail() {
     })();
   }, [id, nav]);
 
-  const handleLikeToggle = async (liked) => {
+  const handleLikeToggle = async (post, liked) => {
     if (liked) {
       await api.delete(`/posts/${id}/like`);
     } else {
@@ -37,14 +37,14 @@ export default function PostDetail() {
     setPost(data.post);
   };
 
-  const handleEcho = async (content, file) => {
+  const handleEcho = async (post, content) => {
     // Implementation similar to Feed
     await api.post(`/posts/${id}/echo`, { content });
     const { data } = await api.get(`/posts/${id}`);
     setPost(data.post);
   };
 
-  const handleComment = async (content, file) => {
+  const handleComment = async (post, content) => {
     // Implementation similar to Feed
     await api.post(`/posts/${id}/comments`, { content });
     const { data } = await api.get(`/posts/${id}`);

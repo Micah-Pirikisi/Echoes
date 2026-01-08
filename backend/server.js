@@ -11,6 +11,8 @@ import authRoutes from "./routes/authRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import searchRoutes from "./routes/searchRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 dotenv.config();
 
@@ -67,6 +69,8 @@ app.use("/auth", authRoutes);
 app.use("/uploads", uploadRoutes);
 app.use("/posts", postRoutes);
 app.use("/users", userRoutes);
+app.use("/search", searchRoutes);
+app.use("/notifications", notificationRoutes);
 
 app.get("/health", (req, res) => res.json({ ok: true }));
 

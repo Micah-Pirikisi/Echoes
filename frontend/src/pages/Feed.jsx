@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import { api } from "../api/client";
 import { PostCard } from "../components/PostCard";
 import { ComposeModal } from "../components/ComposeModal";
 import { useNavigate } from "react-router-dom";
 
 const FILTERS = ["All", "Originals", "Echoes", "Fresh"];
+const POSTS_PER_PAGE = 20;
 
 export default function Feed({
   isComposeOpen,
@@ -14,27 +15,62 @@ export default function Feed({
   const [posts, setPosts] = useState([]);
   const [me, setMe] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [filter, setFilter] = useState("All");
   const [isPosting, setIsPosting] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [offset, setOffset] = useState(0);
+  const observerTarget = useRef(null);
   const nav = useNavigate();
 
-  const loadFeed = async () => {
-    const { data } = await api.get("/posts/feed");
-    setPosts(data.posts);
-    setMe(data.me);
-  };
+  const loadFeed = useCallback(async (skip = 0) => {
+    const isInitial = skip === 0;
+    if (isInitial) setLoading(true);
+    else setLoadingMore(true);
+
+    try {
+      const { data } = await api.get("/posts/feed", {
+        params: { skip, take: POSTS_PER_PAGE },
+      });
+      
+      if (isInitial) {
+        setPosts(data.posts);
+      } else {
+        setPosts((prev) => [...prev, ...data.posts]);
+      }
+      
+      setMe(data.me);
+      setHasMore(data.posts.length === POSTS_PER_PAGE);
+      setOffset(skip + POSTS_PER_PAGE);
+    } catch (err) {
+      if (err.response?.status === 401) nav("/login");
+    } finally {
+      if (isInitial) setLoading(false);
+      else setLoadingMore(false);
+    }
+  }, [nav]);
 
   useEffect(() => {
-    (async () => {
-      try {
-        await loadFeed();
-      } catch (err) {
-        if (err.response?.status === 401) nav("/login");
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [nav]);
+    loadFeed(0);
+  }, [loadFeed]);
+
+  // Infinite scroll observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore && !loading) {
+          loadFeed(offset);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, [offset, hasMore, loadingMore, loading, loadFeed]);
 
   const uploadImage = async (file) => {
     if (!file) return null;
@@ -218,7 +254,14 @@ export default function Feed({
             setSelectedImage={setSelectedImage}
           />
         ))}
-      </div>
+
+        {/* Infinite scroll observer */}
+        <div ref={observerTarget} className="py-4 text-center">
+          {loadingMore && <div className="text-gray-500">Loading more...</div>}
+          {!hasMore && posts.length > 0 && (
+            <div className="text-gray-500 text-sm">No more posts</div>
+          )}
+        </div>      </div>
     </>
   );
 }

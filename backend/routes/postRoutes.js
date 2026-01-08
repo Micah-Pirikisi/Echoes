@@ -10,6 +10,12 @@ import {
   likePost,
   unlikePost,
   addComment,
+  deletePost,
+  editPost,
+  toggleBookmark,
+  getBookmarks,
+  replyToPost,
+  getPostReplies,
 } from "../controllers/postController.js";
 
 const router = Router();
@@ -50,5 +56,32 @@ router.post(
   [body("content").isLength({ min: 1, max: 2000 }).trim()],
   addComment
 );
+
+// Delete post
+router.delete("/:id", ensureAuthenticated, deletePost);
+
+// Edit post
+router.patch(
+  "/:id",
+  ensureAuthenticated,
+  [body("content").optional().isLength({ min: 0, max: 5000 }).trim()],
+  editPost
+);
+
+// Bookmarks
+router.post("/:id/bookmark", ensureAuthenticated, toggleBookmark);
+router.get("/bookmarks", ensureAuthenticated, getBookmarks);
+
+// Replies
+router.post(
+  "/:id/reply",
+  ensureAuthenticated,
+  [
+    body("content").optional().isLength({ min: 0, max: 5000 }).trim(),
+    body("scheduledAt").optional().isISO8601(),
+  ],
+  replyToPost
+);
+router.get("/:id/replies", ensureAuthenticated, getPostReplies);
 
 export default router;
