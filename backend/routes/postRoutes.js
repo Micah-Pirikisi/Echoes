@@ -4,6 +4,7 @@ import { ensureAuthenticated } from "../middleware/auth.js";
 import { body } from "express-validator";
 import {
   getFeed,
+  getPost,
   createPost,
   echoPost,
   likePost,
@@ -15,6 +16,9 @@ const router = Router();
 
 // Feed
 router.get("/feed", ensureAuthenticated, getFeed);
+
+// Get single post
+router.get("/:id", ensureAuthenticated, getPost);
 
 // Create post
 router.post(

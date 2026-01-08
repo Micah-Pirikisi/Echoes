@@ -37,6 +37,26 @@ export const getFeed = async (req, res, next) => {
   }
 };
 
+// GET /:id (get single post with all comments)
+export const getPost = async (req, res, next) => {
+  try {
+    const post = await prisma.post.findUnique({
+      where: { id: req.params.id },
+      include: {
+        author: true,
+        echoParent: { include: { author: true } },
+        comments: { include: { author: true }, orderBy: { createdAt: "asc" } },
+        likes: { select: { userId: true } },
+        _count: { select: { likes: true, echoes: true, comments: true } },
+      },
+    });
+    if (!post) return res.status(404).json({ error: "Post not found" });
+    res.json({ post, me: req.user.id });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // POST / (create post)
 export const createPost = async (req, res, next) => {
   const errors = validationResult(req);

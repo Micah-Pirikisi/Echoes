@@ -76,7 +76,7 @@ export default function Users() {
                   <span className="text-xs text-gray-500">Request sent</span>
                 ) : (
                   <button
-                    className="px-3 py-1 text-sm border rounded hover:border-accent hover:text-accent"
+                    className="px-3 py-1 text-sm border rounded text-green-600 hover:border-green-600 hover:bg-green-50"
                     onClick={() => sendRequest(u.id)}
                   >
                     Follow

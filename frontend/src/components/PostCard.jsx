@@ -50,9 +50,10 @@ export function PostCard({
 
   return (
     <div
-      className={`card p-4 mb-4 transition ${
+      className={`card p-4 mb-4 transition cursor-pointer hover:shadow-lg ${
         isStale ? "opacity-75 scale-[0.99]" : ""
       } ${echoedFrom ? "pulse-gentle" : ""}`}
+      onClick={() => nav(`/posts/${post.id}`)}
     >
       {!author ? (
         <div className="text-red-500 p-4">
