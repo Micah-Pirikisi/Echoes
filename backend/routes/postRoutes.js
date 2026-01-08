@@ -20,7 +20,7 @@ router.get("/feed", ensureAuthenticated, getFeed);
 router.post(
   "/",
   ensureAuthenticated,
-  [body("content").isLength({ min: 1, max: 5000 }).trim()],
+  [body("content").optional().isLength({ min: 0, max: 5000 }).trim()],
   createPost
 );
 

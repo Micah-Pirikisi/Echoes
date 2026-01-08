@@ -4,9 +4,13 @@ import { validationResult } from "express-validator";
 const postQueryInclude = {
   author: true,
   echoParent: { include: { author: true } },
-  comments: { include: { author: true }, orderBy: { createdAt: "asc" } },
+  comments: {
+    include: { author: true },
+    orderBy: { createdAt: "asc" },
+    take: 3,
+  },
   likes: { select: { userId: true } },
-  _count: { select: { likes: true, echoes: true } },
+  _count: { select: { likes: true, echoes: true, comments: true } },
 };
 
 // GET /feed
@@ -40,12 +44,20 @@ export const createPost = async (req, res, next) => {
     return res.status(400).json({ errors: errors.array() });
 
   const { content, imageUrl, scheduledAt } = req.body;
+
+  // Ensure either content or imageUrl is provided
+  if (!content && !imageUrl) {
+    return res
+      .status(400)
+      .json({ error: "Post must have content or an image" });
+  }
+
   try {
     const publishedAt = scheduledAt ? new Date(scheduledAt) : new Date();
     const post = await prisma.post.create({
       data: {
-        content,
-        imageUrl,
+        content: content || null,
+        imageUrl: imageUrl || null,
         authorId: req.user.id,
         scheduledAt: scheduledAt ? publishedAt : null,
         publishedAt,
