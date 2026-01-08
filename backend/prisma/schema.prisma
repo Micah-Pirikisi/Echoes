@@ -18,6 +18,7 @@ model User {
   email        String   @unique
   passwordHash String
   name         String?  // optional for guest users
+  username     String?  @unique
   avatarUrl    String?
   bio          String?
   isGuest      Boolean  @default(false)

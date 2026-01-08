@@ -8,6 +8,7 @@ import {
   acceptFollowRequest,
   rejectFollowRequest,
   updateAvatar,
+  updateBio,
 } from "../controllers/userController.js";
 import { body } from "express-validator";
 
@@ -36,6 +37,12 @@ router.post(
   ensureAuthenticated,
   [body("avatarUrl").isURL()],
   updateAvatar
+);
+router.post(
+  "/me/bio",
+  ensureAuthenticated,
+  [body("bio").isString().trim().isLength({ max: 500 })],
+  updateBio
 );
 
 export default router;

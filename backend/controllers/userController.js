@@ -61,6 +61,7 @@ export const getUserById = async (req, res, next) => {
         posts: {
           orderBy: { publishedAt: "desc" },
           include: {
+            author: true,
             comments: { include: { author: true } },
             likes: { select: { userId: true } },
             echoParent: { include: { author: true } },
@@ -139,6 +140,21 @@ export const updateAvatar = async (req, res, next) => {
       data: { avatarUrl: req.body.avatarUrl },
     });
     res.json({ avatarUrl: updated.avatarUrl });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateBio = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
+  try {
+    const updated = await prisma.user.update({
+      where: { id: req.user.id },
+      data: { bio: req.body.bio },
+    });
+    res.json({ bio: updated.bio });
   } catch (err) {
     next(err);
   }

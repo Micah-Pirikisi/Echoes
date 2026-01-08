@@ -5,13 +5,20 @@ export function useAuth() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const checkAuth = async () => {
+    try {
+      const res = await api.get("/auth/me");
+      setUser(res.data || null);
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    api
-      .get("/auth/me")
-      .then((res) => setUser(res.data || null))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
+    checkAuth();
   }, []);
 
-  return { user, setUser, loading };
+  return { user, setUser, loading, checkAuth };
 }
