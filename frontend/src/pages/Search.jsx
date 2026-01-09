@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { PostCard } from "../components/PostCard";
+import { UserHoverCard } from "../components/UserHoverCard";
 
 export default function Search() {
   const [searchParams] = useSearchParams();
@@ -139,33 +140,36 @@ export default function Search() {
             </div>
           ) : (
             users.map((user) => (
-              <div
-                key={user.id}
-                className="card p-4 flex items-center gap-4"
-              >
-                <img
-                  src={
-                    user.avatarUrl ||
-                    "https://www.gravatar.com/avatar?d=identicon"
-                  }
-                  alt={user.name}
-                  className="w-20 h-20 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                  onClick={() => navigate(`/profile/${user.id}`)}
-                />
-                <div className="flex-1 min-w-0">
-                  <div 
-                    className="font-semibold cursor-pointer hover:text-accent transition-colors"
+              <div key={user.id} className="card p-4 flex items-center gap-4">
+                <UserHoverCard userId={user.id}>
+                  <img
+                    src={
+                      user.avatarUrl ||
+                      "https://www.gravatar.com/avatar?d=identicon"
+                    }
+                    alt={user.name}
+                    className="w-20 h-20 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => navigate(`/profile/${user.id}`)}
-                  >
-                    {user.name}
-                  </div>
-                  {user.username && (
-                    <div 
-                      className="text-xs text-gray-500 cursor-pointer hover:text-accent transition-colors"
+                  />
+                </UserHoverCard>
+                <div className="flex-1 min-w-0">
+                  <UserHoverCard userId={user.id}>
+                    <div
+                      className="font-semibold cursor-pointer hover:text-accent transition-colors"
                       onClick={() => navigate(`/profile/${user.id}`)}
                     >
-                      @{user.username}
+                      {user.name}
                     </div>
+                  </UserHoverCard>
+                  {user.username && (
+                    <UserHoverCard userId={user.id}>
+                      <div
+                        className="text-xs text-gray-500 cursor-pointer hover:text-accent transition-colors"
+                        onClick={() => navigate(`/profile/${user.id}`)}
+                      >
+                        @{user.username}
+                      </div>
+                    </UserHoverCard>
                   )}
                   {user.bio && (
                     <div className="text-sm text-gray-600 truncate">

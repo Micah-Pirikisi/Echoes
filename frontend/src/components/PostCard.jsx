@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserHoverCard } from "./UserHoverCard";
 
 function computeTravelDepth(post) {
   let depth = 0;
@@ -62,41 +63,47 @@ export function PostCard({
       ) : (
         <>
           <div className="flex items-center gap-3">
-            <img
-              src={
-                author.avatarUrl ||
-                "https://www.gravatar.com/avatar?d=identicon"
-              }
-              alt={author.name}
-              className={`w-16 h-16 rounded-full object-cover cursor-pointer hover:opacity-80 transition ${
-                ageMs < 1000 * 60 * 60 * 24 ? "has-recent-post" : ""
-              }`}
-              onClick={(e) => {
-                e.stopPropagation();
-                nav(`/profile/${author.id}`);
-              }}
-            />
+            <UserHoverCard userId={author.id}>
+              <img
+                src={
+                  author.avatarUrl ||
+                  "https://www.gravatar.com/avatar?d=identicon"
+                }
+                alt={author.name}
+                className={`w-16 h-16 rounded-full object-cover cursor-pointer hover:opacity-80 transition ${
+                  ageMs < 1000 * 60 * 60 * 24 ? "has-recent-post" : ""
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nav(`/profile/${author.id}`);
+                }}
+              />
+            </UserHoverCard>
             <div>
               <div className="font-semibold flex items-center gap-2">
-                <span
-                  className="cursor-pointer hover:text-accent transition"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    nav(`/profile/${author.id}`);
-                  }}
-                >
-                  {author.name}
-                </span>
-                {author.username && (
+                <UserHoverCard userId={author.id}>
                   <span
-                    className="text-gray-500 cursor-pointer hover:text-accent transition"
+                    className="cursor-pointer hover:text-accent transition"
                     onClick={(e) => {
                       e.stopPropagation();
                       nav(`/profile/${author.id}`);
                     }}
                   >
-                    @{author.username}
+                    {author.name}
                   </span>
+                </UserHoverCard>
+                {author.username && (
+                  <UserHoverCard userId={author.id}>
+                    <span
+                      className="text-gray-500 cursor-pointer hover:text-accent transition"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        nav(`/profile/${author.id}`);
+                      }}
+                    >
+                      @{author.username}
+                    </span>
+                  </UserHoverCard>
                 )}
                 {echoedFrom && (
                   <span className="text-xs text-gray-500">
@@ -137,7 +144,7 @@ export function PostCard({
           {echoedFrom && (
             <div className="mt-3 border border-dashed border-gray-200 rounded p-3 bg-gray-50">
               <div className="text-xs text-gray-500 mb-1">Original</div>
-              <div 
+              <div
                 className="text-sm font-semibold cursor-pointer hover:text-accent transition"
                 onClick={(e) => {
                   e.stopPropagation();

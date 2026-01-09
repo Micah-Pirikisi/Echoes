@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/client";
+import { UserHoverCard } from "../components/UserHoverCard";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -56,15 +57,19 @@ export default function Users() {
               className="card p-3 flex items-center gap-3 cursor-pointer hover:bg-opacity-80 transition-all"
               onClick={() => nav(`/profile/${u.id}`)}
             >
-              <img
-                src={
-                  u.avatarUrl || "https://www.gravatar.com/avatar?d=identicon"
-                }
-                alt={u.name}
-                className="w-20 h-20 rounded-full object-cover"
-              />
+              <UserHoverCard userId={u.id}>
+                <img
+                  src={
+                    u.avatarUrl || "https://www.gravatar.com/avatar?d=identicon"
+                  }
+                  alt={u.name}
+                  className="w-20 h-20 rounded-full object-cover"
+                />
+              </UserHoverCard>
               <div className="flex-1 min-w-0">
-                <div className="font-semibold">{u.name}</div>
+                <UserHoverCard userId={u.id}>
+                  <div className="font-semibold">{u.name}</div>
+                </UserHoverCard>
                 <div className="text-xs text-gray-500 truncate">{u.bio}</div>
               </div>
               <div onClick={(e) => e.stopPropagation()}>
