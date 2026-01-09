@@ -161,17 +161,25 @@ export function PostCard({
 
           <div className="mt-3 flex items-center gap-3 text-sm text-gray-600">
             <button
-              onClick={() => onLikeToggle(post, liked)}
-              className={`px-3 py-1 rounded border ${
+              onClick={(e) => {
+                e.stopPropagation();
+                onLikeToggle(post, liked);
+              }}
+              className={`px-3 py-1 rounded border flex items-center gap-2 ${
                 liked ? "bg-accent text-white border-accent" : "border-gray-200"
               }`}
             >
+              <span>{liked ? "❤️" : "🤍"}</span>
               {liked ? "Liked" : "Like"} ({post._count?.likes || 0})
             </button>
             <button
-              onClick={() => onEcho(post)}
-              className="px-3 py-1 rounded border border-gray-200 hover:border-accent hover:text-accent"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEcho(post);
+              }}
+              className="px-3 py-1 rounded border border-gray-200 hover:border-accent hover:text-accent flex items-center gap-2"
             >
+              <span>🔄</span>
               Echo ({post._count?.echoes || 0})
             </button>
           </div>
