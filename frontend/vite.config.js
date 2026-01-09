@@ -13,4 +13,7 @@ export default defineConfig({
       "/uploads": "http://localhost:4000",
     },
   },
+  preview: {
+    allowedHosts: ["echoes-production-6b63.up.railway.app"],
+  },
 });
