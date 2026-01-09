@@ -36,18 +36,18 @@
 }
 
 :root:not(.dark) {
-  --bg: #ffffff;
-  --bg-secondary: #f9fafb;
-  --panel: #f3f4f6;
+  --bg: #f5f5f5;
+  --bg-secondary: #efefef;
+  --panel: #e8e8e8;
   --card: #ffffff;
-  --card-border: #e5e7eb;
+  --card-border: #d4d4d8;
   --accent: #10b981;
   --accent-light: #34d399;
   --accent-strong: #059669;
-  --text: #1f2937;
-  --text-secondary: #4b5563;
-  --subtext: #6b7280;
-  --muted: #9ca3af;
+  --text: #1a1a1a;
+  --text-secondary: #3f3f46;
+  --subtext: #52525b;
+  --muted: #71717a;
   --shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
   --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
   --shadow-lg: 0 25px 50px rgba(0, 0, 0, 0.15);

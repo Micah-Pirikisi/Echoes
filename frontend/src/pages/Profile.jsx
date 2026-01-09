@@ -203,7 +203,9 @@ export default function Profile() {
         )}
       </div>
 
-      <h3 className="text-lg font-semibold mb-3" style={{ marginTop: "50px" }}>Posts & Echoes</h3>
+      <h3 className="text-lg font-semibold mb-3" style={{ marginTop: "50px" }}>
+        Posts & Echoes
+      </h3>
       {profile.posts && profile.posts.length > 0 ? (
         profile.posts.map((p) => (
           <PostCard
