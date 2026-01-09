@@ -6,6 +6,7 @@ import Feed from "./pages/Feed";
 import Users from "./pages/Users";
 import Profile from "./pages/Profile";
 import PostDetail from "./pages/PostDetail";
+import EchoTree from "./pages/EchoTree";
 import Search from "./pages/Search";
 import { Sidebar } from "./components/Sidebar";
 import { ImageModal } from "./components/ImageModal";
@@ -52,6 +53,7 @@ export default function App() {
             <Route path="/users" element={<Users />} />
             <Route path="/profile/:id" element={<Profile />} />
             <Route path="/posts/:id" element={<PostDetail />} />
+            <Route path="/posts/:id/tree" element={<EchoTree />} />
             <Route path="/search" element={<Search />} />
             <Route path="*" element={<Navigate to="/feed" replace />} />
           </>

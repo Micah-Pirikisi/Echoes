@@ -76,6 +76,14 @@ export default function PostDetail() {
         onComment={handleComment}
         setSelectedImage={() => {}}
       />
+      {(post._count?.echoes >= 2 || post.echoParent) && (
+        <button
+          onClick={() => nav(`/posts/${post.id}/tree`)}
+          className="mt-6 px-4 py-2 bg-accent hover:bg-accent/80 text-white rounded-lg transition"
+        >
+          🌳 View Echo Tree ({post._count.echoes})
+        </button>
+      )}
     </div>
   );
 }

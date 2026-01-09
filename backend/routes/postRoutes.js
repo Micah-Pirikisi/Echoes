@@ -16,6 +16,7 @@ import {
   getBookmarks,
   replyToPost,
   getPostReplies,
+  getEchoes,
 } from "../controllers/postController.js";
 
 const router = Router();
@@ -83,5 +84,8 @@ router.post(
   replyToPost
 );
 router.get("/:id/replies", ensureAuthenticated, getPostReplies);
+
+// Echoes
+router.get("/:id/echoes", ensureAuthenticated, getEchoes);
 
 export default router;

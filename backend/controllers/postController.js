@@ -358,3 +358,36 @@ export const getPostReplies = async (req, res, next) => {
     next(err);
   }
 };
+// GET /:id/echoes (get all echoes of a post, recursively including echoes of echoes)
+export const getEchoes = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const fetchAllEchoes = async (postId) => {
+      const directEchoes = await prisma.post.findMany({
+        where: {
+          echoParentId: postId,
+          deletedAt: null,
+        },
+        include: postQueryInclude,
+        orderBy: { publishedAt: "desc" },
+      });
+
+      let allEchoes = [...directEchoes];
+
+      // Recursively fetch echoes of echoes
+      for (const echo of directEchoes) {
+        const childEchoes = await fetchAllEchoes(echo.id);
+        allEchoes = [...allEchoes, ...childEchoes];
+      }
+
+      return allEchoes;
+    };
+
+    const echoes = await fetchAllEchoes(id);
+
+    res.json({ echoes });
+  } catch (err) {
+    next(err);
+  }
+};
