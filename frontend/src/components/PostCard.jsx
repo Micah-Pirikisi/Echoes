@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserHoverCard } from "./UserHoverCard";
+import { EchoModal } from "./EchoModal";
 
 function computeTravelDepth(post) {
   let depth = 0;
@@ -24,6 +25,8 @@ export function PostCard({
   const [commentText, setCommentText] = useState("");
   const [commentFile, setCommentFile] = useState(null);
   const [now, setNow] = useState(() => Date.now());
+  const [isEchoModalOpen, setIsEchoModalOpen] = useState(false);
+  const [echoLoading, setEchoLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -181,7 +184,7 @@ export function PostCard({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onEcho(post);
+                setIsEchoModalOpen(true);
               }}
               className="px-3 py-1 rounded border border-gray-200 hover:border-accent hover:text-accent flex items-center gap-2"
             >
@@ -238,6 +241,20 @@ export function PostCard({
           </div>
         </>
       )}
+      <EchoModal
+        isOpen={isEchoModalOpen}
+        onClose={() => setIsEchoModalOpen(false)}
+        onSubmit={async (echoPost, content) => {
+          setEchoLoading(true);
+          try {
+            await onEcho(echoPost, content);
+          } finally {
+            setEchoLoading(false);
+          }
+        }}
+        loading={echoLoading}
+        post={post}
+      />
     </div>
   );
 }

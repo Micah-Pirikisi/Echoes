@@ -165,7 +165,7 @@ export default function Feed({
   };
 
   // optimistic echo
-  const echoPost = async (post) => {
+  const echoPost = async (post, content = "") => {
     setPosts((prev) =>
       prev.map((p) =>
         p.id === post.id
@@ -174,7 +174,7 @@ export default function Feed({
       )
     );
     try {
-      await api.post(`/posts/${post.id}/echo`, { content: "" });
+      await api.post(`/posts/${post.id}/echo`, { content });
       await loadFeed();
     } catch {
       await loadFeed();
