@@ -15,7 +15,7 @@ export default function Search() {
   const [activeTab, setActiveTab] = useState("posts");
 
   useEffect(() => {
-    if (!q || q.length < 2) {
+    if (!q) {
       setPosts([]);
       setUsers([]);
       return;
@@ -69,7 +69,7 @@ export default function Search() {
         <h1 className="text-3xl font-bold mb-4">Search</h1>
         <input
           type="text"
-          placeholder="Search posts, people, #hashtags..."
+          placeholder="Search posts and people..."
           defaultValue={q}
           onChange={(e) => navigate(`/search?q=${e.target.value}`)}
           className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-accent"

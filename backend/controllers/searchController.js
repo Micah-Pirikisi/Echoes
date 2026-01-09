@@ -4,16 +4,13 @@ import prisma from "../src/config/prisma.js";
 export const searchPosts = async (req, res, next) => {
   try {
     const { q } = req.query;
-    if (!q || q.length < 2) {
+    if (!q) {
       return res.json({ posts: [] });
     }
 
     const posts = await prisma.post.findMany({
       where: {
-        OR: [
-          { content: { search: q } },
-          { hashtags: { some: { hashtag: { tag: { search: q } } } } },
-        ],
+        content: { contains: q, mode: "insensitive" },
         deletedAt: null,
       },
       include: {
@@ -21,8 +18,7 @@ export const searchPosts = async (req, res, next) => {
         echoParent: { include: { author: true } },
         comments: { take: 3, include: { author: true }, orderBy: { createdAt: "asc" } },
         likes: { select: { userId: true } },
-        _count: { select: { likes: true, echoes: true, comments: true } },
-        hashtags: { include: { hashtag: true } },
+        _count: { select: { likes: true, comments: true } },
       },
       orderBy: { publishedAt: "desc" },
       take: 50,
@@ -38,7 +34,7 @@ export const searchPosts = async (req, res, next) => {
 export const searchUsers = async (req, res, next) => {
   try {
     const { q } = req.query;
-    if (!q || q.length < 2) {
+    if (!q) {
       return res.json({ users: [] });
     }
 

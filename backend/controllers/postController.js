@@ -28,7 +28,11 @@ export const getFeed = async (req, res, next) => {
     const now = new Date();
 
     const posts = await prisma.post.findMany({
-      where: { authorId: { in: ids }, publishedAt: { lte: now }, deletedAt: null },
+      where: {
+        authorId: { in: ids },
+        publishedAt: { lte: now },
+        deletedAt: null,
+      },
       orderBy: { publishedAt: "desc" },
       include: postQueryInclude,
       skip,
@@ -146,16 +150,16 @@ export const likePost = async (req, res, next) => {
 // DELETE /:id/like
 export const unlikePost = async (req, res, next) => {
   try {
-    const result = await prisma.like.delete({
-      where: { userId_postId: { userId: req.user.id, postId: req.params.id } },
-    }).catch(() => null); // If like doesn't exist, that's fine
+    const result = await prisma.like
+      .delete({
+        where: {
+          userId_postId: { userId: req.user.id, postId: req.params.id },
+        },
+      })
+      .catch(() => null); // If like doesn't exist, that's fine
     res.json({ ok: true });
   } catch (err) {
     console.error("Unlike error:", err);
-    next(err);
-  }
-};
-  } catch (err) {
     next(err);
   }
 };
@@ -186,7 +190,8 @@ export const deletePost = async (req, res, next) => {
       where: { id: req.params.id },
     });
     if (!post) return res.status(404).json({ error: "Post not found" });
-    if (post.authorId !== req.user.id) return res.status(403).json({ error: "Unauthorized" });
+    if (post.authorId !== req.user.id)
+      return res.status(403).json({ error: "Unauthorized" });
 
     await prisma.post.update({
       where: { id: req.params.id },
@@ -209,7 +214,8 @@ export const editPost = async (req, res, next) => {
       where: { id: req.params.id },
     });
     if (!post) return res.status(404).json({ error: "Post not found" });
-    if (post.authorId !== req.user.id) return res.status(403).json({ error: "Unauthorized" });
+    if (post.authorId !== req.user.id)
+      return res.status(403).json({ error: "Unauthorized" });
 
     const { content } = req.body;
     const updated = await prisma.post.update({
@@ -218,7 +224,11 @@ export const editPost = async (req, res, next) => {
       include: {
         author: true,
         echoParent: { include: { author: true } },
-        comments: { take: 3, include: { author: true }, orderBy: { createdAt: "asc" } },
+        comments: {
+          take: 3,
+          include: { author: true },
+          orderBy: { createdAt: "asc" },
+        },
         likes: { select: { userId: true } },
         _count: { select: { likes: true, echoes: true, comments: true } },
       },
@@ -238,7 +248,9 @@ export const toggleBookmark = async (req, res, next) => {
 
     if (existing) {
       await prisma.bookmark.delete({
-        where: { userId_postId: { userId: req.user.id, postId: req.params.id } },
+        where: {
+          userId_postId: { userId: req.user.id, postId: req.params.id },
+        },
       });
     } else {
       await prisma.bookmark.create({
@@ -261,7 +273,11 @@ export const getBookmarks = async (req, res, next) => {
           include: {
             author: true,
             echoParent: { include: { author: true } },
-            comments: { take: 3, include: { author: true }, orderBy: { createdAt: "asc" } },
+            comments: {
+              take: 3,
+              include: { author: true },
+              orderBy: { createdAt: "asc" },
+            },
             likes: { select: { userId: true } },
             _count: { select: { likes: true, echoes: true, comments: true } },
           },
@@ -286,7 +302,9 @@ export const replyToPost = async (req, res, next) => {
   const { content, imageUrl, scheduledAt } = req.body;
   try {
     if (!content && !imageUrl) {
-      return res.status(400).json({ error: "Reply must have content or an image" });
+      return res
+        .status(400)
+        .json({ error: "Reply must have content or an image" });
     }
 
     const parentPost = await prisma.post.findUnique({
@@ -325,7 +343,11 @@ export const getPostReplies = async (req, res, next) => {
       where: { replyToId: req.params.id, deletedAt: null },
       include: {
         author: true,
-        comments: { take: 3, include: { author: true }, orderBy: { createdAt: "asc" } },
+        comments: {
+          take: 3,
+          include: { author: true },
+          orderBy: { createdAt: "asc" },
+        },
         likes: { select: { userId: true } },
         _count: { select: { likes: true, echoes: true, comments: true } },
       },
