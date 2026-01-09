@@ -150,15 +150,19 @@ export default function Search() {
                     "https://www.gravatar.com/avatar?d=identicon"
                   }
                   alt={user.name}
-                  className="w-12 h-12 rounded-full object-cover"
+                  className="w-20 h-20 rounded-full object-cover"
                 />
                 <div className="flex-1">
                   <div className="font-semibold">{user.name}</div>
                   {user.username && (
-                    <div className="text-xs text-gray-500">@{user.username}</div>
+                    <div className="text-xs text-gray-500">
+                      @{user.username}
+                    </div>
                   )}
                   {user.bio && (
-                    <div className="text-sm text-gray-600 truncate">{user.bio}</div>
+                    <div className="text-sm text-gray-600 truncate">
+                      {user.bio}
+                    </div>
                   )}
                 </div>
               </div>
