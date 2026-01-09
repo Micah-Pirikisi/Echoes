@@ -141,8 +141,7 @@ export default function Search() {
             users.map((user) => (
               <div
                 key={user.id}
-                className="card p-4 flex items-center gap-4 cursor-pointer hover:bg-opacity-80"
-                onClick={() => navigate(`/profile/${user.id}`)}
+                className="card p-4 flex items-center gap-4"
               >
                 <img
                   src={
@@ -150,12 +149,21 @@ export default function Search() {
                     "https://www.gravatar.com/avatar?d=identicon"
                   }
                   alt={user.name}
-                  className="w-20 h-20 rounded-full object-cover"
+                  className="w-20 h-20 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={() => navigate(`/profile/${user.id}`)}
                 />
-                <div className="flex-1">
-                  <div className="font-semibold">{user.name}</div>
+                <div className="flex-1 min-w-0">
+                  <div 
+                    className="font-semibold cursor-pointer hover:text-accent transition-colors"
+                    onClick={() => navigate(`/profile/${user.id}`)}
+                  >
+                    {user.name}
+                  </div>
                   {user.username && (
-                    <div className="text-xs text-gray-500">
+                    <div 
+                      className="text-xs text-gray-500 cursor-pointer hover:text-accent transition-colors"
+                      onClick={() => navigate(`/profile/${user.id}`)}
+                    >
                       @{user.username}
                     </div>
                   )}

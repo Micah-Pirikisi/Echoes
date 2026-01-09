@@ -71,20 +71,29 @@ export function PostCard({
               className={`w-16 h-16 rounded-full object-cover cursor-pointer hover:opacity-80 transition ${
                 ageMs < 1000 * 60 * 60 * 24 ? "has-recent-post" : ""
               }`}
-              onClick={() => nav(`/profile/${author.id}`)}
+              onClick={(e) => {
+                e.stopPropagation();
+                nav(`/profile/${author.id}`);
+              }}
             />
             <div>
               <div className="font-semibold flex items-center gap-2">
                 <span
                   className="cursor-pointer hover:text-accent transition"
-                  onClick={() => nav(`/profile/${author.id}`)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nav(`/profile/${author.id}`);
+                  }}
                 >
                   {author.name}
                 </span>
                 {author.username && (
                   <span
                     className="text-gray-500 cursor-pointer hover:text-accent transition"
-                    onClick={() => nav(`/profile/${author.id}`)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      nav(`/profile/${author.id}`);
+                    }}
                   >
                     @{author.username}
                   </span>
@@ -128,7 +137,13 @@ export function PostCard({
           {echoedFrom && (
             <div className="mt-3 border border-dashed border-gray-200 rounded p-3 bg-gray-50">
               <div className="text-xs text-gray-500 mb-1">Original</div>
-              <div className="text-sm font-semibold">
+              <div 
+                className="text-sm font-semibold cursor-pointer hover:text-accent transition"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nav(`/profile/${echoedFrom.author?.id}`);
+                }}
+              >
                 {echoedFrom.author?.name}
               </div>
               <div className="text-sm text-gray-800 whitespace-pre-line">
