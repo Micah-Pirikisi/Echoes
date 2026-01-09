@@ -114,7 +114,7 @@ export default function Profile() {
 
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <div className="card p-4 mb-4">
+      <div className={isMe ? "" : "card p-4 mb-4"}>
         <div className="flex items-center gap-4 mb-4">
           <img
             src={
@@ -135,7 +135,7 @@ export default function Profile() {
               <div className="text-gray-500 text-sm">@{profile.username}</div>
             )}
             {isMe && (
-              <div className="flex flex-col gap-2 mt-2">
+              <div className="flex flex-row gap-2 mt-2">
                 <div className="file-input-wrapper">
                   <input
                     id="avatar-upload"
@@ -146,11 +146,11 @@ export default function Profile() {
                   <label htmlFor="avatar-upload">Choose Avatar</label>
                 </div>
                 <button
-                  className="px-3 py-1 bg-accent text-white rounded text-sm"
+                  className="file-input-wrapper"
                   onClick={uploadAvatar}
                   disabled={!file}
                 >
-                  Update avatar
+                  <label>Update Avatar</label>
                 </button>
               </div>
             )}
@@ -203,7 +203,7 @@ export default function Profile() {
         )}
       </div>
 
-      <h3 className="text-lg font-semibold mb-3">Posts & Echoes</h3>
+      <h3 className="text-lg font-semibold mb-3" style={{ marginTop: "50px" }}>Posts & Echoes</h3>
       {profile.posts && profile.posts.length > 0 ? (
         profile.posts.map((p) => (
           <PostCard
