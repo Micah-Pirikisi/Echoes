@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Spinner } from "../components/Spinner";
 import { api } from "../api/client";
 import { PostCard } from "../components/PostCard";
 
@@ -51,7 +52,12 @@ export default function PostDetail() {
     setPost(data.post);
   };
 
-  if (loading) return <div className="p-6">Loading...</div>;
+  if (loading)
+    return (
+      <div className="p-6 flex justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
   if (!post) return <div className="p-6">Post not found</div>;
 
   return (

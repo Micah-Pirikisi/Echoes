@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { Spinner } from "../components/Spinner";
 import { api } from "../api/client";
 import { PostCard } from "../components/PostCard";
 import { UserHoverCard } from "../components/UserHoverCard";
@@ -102,7 +103,11 @@ export default function Search() {
         </div>
       )}
 
-      {loading && <div className="text-center py-8">Searching...</div>}
+      {loading && (
+        <div className="text-center py-8">
+          <Spinner size="lg" />
+        </div>
+      )}
 
       {!q && (
         <div className="text-center py-12 text-gray-500">

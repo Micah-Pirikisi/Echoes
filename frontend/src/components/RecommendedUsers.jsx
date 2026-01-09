@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Spinner } from "./Spinner";
 import { api } from "../api/client";
 import { UserHoverCard } from "./UserHoverCard";
 
@@ -29,7 +30,12 @@ export function RecommendedUsers() {
     loadRecommendations();
   }, []);
 
-  if (loading) return <div className="card p-4">Loading...</div>;
+  if (loading)
+    return (
+      <div className="card p-4 flex justify-center">
+        <Spinner size="md" />
+      </div>
+    );
   if (users.length === 0) return null;
 
   return (

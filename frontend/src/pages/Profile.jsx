@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Spinner } from "../components/Spinner";
 import { api } from "../api/client";
 import { PostCard } from "../components/PostCard";
 
@@ -107,7 +108,12 @@ export default function Profile() {
     }
   };
 
-  if (loading) return <div className="p-6">Loading profile...</div>;
+  if (loading)
+    return (
+      <div className="p-6 flex justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
   if (!profile) return <div className="p-6">Profile not found</div>;
 
   const isMe = me === profile.id;

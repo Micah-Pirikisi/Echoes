@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
+import { Spinner } from "./Spinner";
 import { api } from "../api/client";
 
 export function UserHoverCard({ userId, children }) {
@@ -80,8 +81,8 @@ export function UserHoverCard({ userId, children }) {
             onMouseLeave={handleMouseLeave}
           >
             {loading ? (
-              <div className="text-center py-4 text-sm text-gray-500">
-                Loading...
+              <div className="flex justify-center py-6">
+                <Spinner size="md" />
               </div>
             ) : user ? (
               <div className="space-y-3">
