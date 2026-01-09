@@ -142,7 +142,13 @@ export function PostCard({
           )}
 
           {echoedFrom && (
-            <div className="mt-3 border border-dashed border-gray-200 rounded p-3 bg-gray-50">
+            <div
+              className="mt-3 border border-dashed border-gray-200 rounded p-3 bg-gray-50 cursor-pointer hover:bg-gray-100 transition"
+              onClick={(e) => {
+                e.stopPropagation();
+                nav(`/posts/${echoedFrom.id}`);
+              }}
+            >
               <div className="text-xs text-gray-500 mb-1">Original</div>
               <div
                 className="text-sm font-semibold cursor-pointer hover:text-accent transition"
